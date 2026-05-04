@@ -32,8 +32,7 @@ The idea of this morbid death clock is to inspire you to "carpe diem" and make t
 ---
 
 ## Video Demo
-
-# link to video goes here
+link to video goes here
 
 ---
 
@@ -58,7 +57,7 @@ The idea of this morbid death clock is to inspire you to "carpe diem" and make t
 - Go to audience and ensure the publishing status is set to in production.
 
 <summary>set publishing status</summary> 
-<img src="../image1.png" width="512">
+<img src="image1.png" width="512">
 
 ---
 
