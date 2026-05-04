@@ -1,6 +1,7 @@
 import os, csv, time
 from datetime import datetime
 from API import add_to_google_calendar
+from UI import questions, Answers
 
 folder = os.path.dirname(os.path.abspath(__file__))
 data_file = os.path.join(folder, "data.csv")
@@ -88,51 +89,31 @@ def check_and_load():
     else:
         #no file found, ask questions then save in file
         print("No save file found. Starting questions...")
-        UNIX_LE = questions()
+        answers = questions() # get answers from questions in UI.py
+        UNIX_LE = calculations(answers)
         with open(save_file, "w") as file: #create file
             file.write(str(UNIX_LE)) #save UNIX life expecatcy to file
     return UNIX_LE
 
-def questions():
-    checkforDBfile()
-    weight = int(input("how much do you weigh? (kg) "))
-    height = int(input("how tall are you? (cm) "))
+def calculations(var: Answers):
+    BMI = CalculateBMI(var.weight,var.height)
+    DOB = DateofBirth(var.birthday)
+    lifeExpectancy = GetFromDB(var.country,var.gender)
+    lifeExpectancy += Exersie(var.exercise)
+    lifeExpectancy += Diet(var.diet)
+    lifeExpectancy += Outlook(var.outlook)
 
-    while True:
-        birthDay = input("when were you born? [d/mm/yyyy] ")
-        DOB = DateofBirth(birthDay)
-        if DOB is not None:
-            break # continue as normal
-        print("Invalid date")
-
-    gender = input("what was is your gender? (m/f) ").strip().lower()
-    country = input("what country are you from? ").strip().title()
-    smoke = input("do you smoke? (y/n) ").strip().lower()
-    alcohol = input("do you drink alcohol? (y/n) ").strip().lower()
-    stress = input("are you often stressed? (y/n) ").strip().lower()
-    exersise = input("how much do you exersies?\n - none\n - moderate (1-3 times a week)\n - active(4-7 times a week)\n").strip().lower()
-    diet = input("what is your diet?\n - poor\n - average\n - good\n").strip().lower()
-    outlook = input("what is your outlook on life\n - pessimistic\n - neutral\n - optimistic").strip().lower()
-    sleep = int(input("how many hours do you sleep at night? "))
-    BMI = CalculateBMI(weight,height)
-
-    #calculation
-    lifeExpectancy = GetFromDB(country,gender)
-    lifeExpectancy += Exersie(exersise)
-    lifeExpectancy += Diet(diet)
-    lifeExpectancy += Outlook(outlook)
-
-    if smoke == "y":
+    if var.smoke == "y":
         lifeExpectancy -= 10
-    if alcohol == "y":
+    if var.alcohol == "y":
         lifeExpectancy -= 4.5
-    if stress == "y":
+    if var.stress == "y":
         lifeExpectancy -= 2.8
 
-    if sleep < 0 or sleep >= 24:
+    if var.sleep < 0 or var.sleep >= 24:
         print("invalid sleep input")
         lifeExpectancy += 0
-    elif sleep <= 4 or sleep >= 9:
+    elif var.sleep <= 4 or var.sleep >= 9:
         lifeExpectancy -= 2
     else:
         lifeExpectancy += 2
@@ -155,7 +136,7 @@ def questions():
     return round(DOB+lifeExpectancy) #return date of death in UNIX time
 
 TARGET = check_and_load()
-add_to_google_calendar(TARGET)
+add_to_google_calendar(TARGET) # from API.py
 
 while True:
     current_time = int(time.time()) # Get current Unix time
