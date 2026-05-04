@@ -7,14 +7,6 @@ folder = os.path.dirname(os.path.abspath(__file__))
 data_file = os.path.join(folder, "data.csv")
 save_file = os.path.join(folder, "save.txt")
 
-def checkforDBfile():
-    try:
-        with open(data_file, "r") as f:
-            return
-    except FileNotFoundError:
-        print(f"Database file not found.")
-        quit()
-
 def GetFromDB(country,gender):
     with open(data_file, "r") as f:
         file = csv.DictReader(f)
@@ -72,6 +64,14 @@ def Diet(value):
         return 0
 
 def check_and_load():
+    #checks if database file exists
+    try:
+        with open(data_file, "r") as f:
+            return
+    except FileNotFoundError:
+        print(f"Database file not found.")
+        quit()
+
     # Checks if the save file exists, if not it creates it
     if os.path.exists(save_file):
         with open(save_file, "r") as file:
@@ -89,7 +89,8 @@ def check_and_load():
     else:
         #no file found, ask questions then save in file
         print("No save file found. Starting questions...")
-        answers = questions() # get answers from questions in UI.py
+        # run UI from UI.py to get answers
+        answers = questions() # get answers from questions in UI
         UNIX_LE = calculations(answers)
         with open(save_file, "w") as file: #create file
             file.write(str(UNIX_LE)) #save UNIX life expecatcy to file
@@ -136,7 +137,7 @@ def calculations(var: Answers):
     return round(DOB+lifeExpectancy) #return date of death in UNIX time
 
 TARGET = check_and_load()
-add_to_google_calendar(TARGET) # from API.py
+add_to_google_calendar(TARGET)
 
 while True:
     current_time = int(time.time()) # Get current Unix time
