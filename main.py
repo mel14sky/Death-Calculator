@@ -67,7 +67,7 @@ def check_and_load():
     #checks if database file exists
     try:
         with open(data_file, "r") as f:
-            return
+            pass #file exists
     except FileNotFoundError:
         print(f"Database file not found.")
         quit()
