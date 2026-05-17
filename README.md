@@ -42,6 +42,8 @@ link to video goes here
 
 - download your API key and store it credentials.json
 
+- Run main.py
+
 - If you want to restart the questions again simply delete the save.txt file
 
 ### To download your key:
